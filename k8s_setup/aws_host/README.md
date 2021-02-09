@@ -1,2 +1,4 @@
 ## What to Do  =>>
-1. Change **akki.pem** file with your **ssh_private_key_file** in the same folder.
+1. Change **akki.pem** file with your **ssh_private_key_file** .
+2. Make sure you are in **aws_host** folder.
+3. That's All for this folder.
