@@ -24,6 +24,6 @@
 - Must change you **Ansible Configuration** file with Above mentioned file.
 
 ## Now =>
-1. Run **bash aws** command first. If your playbook fail to run then also run this command first then try to run playbook.
+1. Run `**bash aws**` command first. If your playbook fail to run then also run this command first then try to run playbook.
 2. You can Run **master.yml** file to Configure **kubernetes Master Node** using `ansible-playbook master.yml` command.
 3. You can Run **worker.yml** file to Configure **kubernetes Worker Node** using `ansible-playbook worker.yml` command.
