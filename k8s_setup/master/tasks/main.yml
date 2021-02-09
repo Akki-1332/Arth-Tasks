@@ -1,0 +1,87 @@
+---
+# task file for master...
+  - name: "Docker Installation..."
+    package:
+            name: "docker"
+            state: present
+  - name: "Docker Driver Updating..."
+    copy:
+            src: "docker.daemon.json"
+            dest: "/etc/docker/daemon.json"
+
+  - name: "Creating Kubernetes Repo..."
+    copy:
+            src: "k8s.repo"
+            dest: "/etc/yum.repos.d/kubernetes.repo"
+
+  - name: "Kubernetes Installation..."
+    package:
+            name: "kubeadm"
+            state: present
+
+  - name: "Iproute-tc Installation..."
+    package:
+            name: "iproute-tc"
+            state: present
+
+  - name: "Configuring K8s..."
+    copy:
+            src: "k8s.txt"
+            dest: "/etc/sysctl.d/k8s.conf"
+
+  - name: "System starting..."
+    shell:
+            cmd: "sysctl --system"
+
+  - name: "Docker Service starting..."
+    service:
+            name: "docker"
+            state: started
+            enabled: yes
+
+  - name: "Kubelet Service Starting..."
+    service:
+            name: "kubelet"
+            state: started
+            enabled: yes
+  - name: "Pulling Images..."
+    shell:
+            cmd: "kubeadm config images pull"
+
+  - name: "Kubernet Initailizing..."
+    shell:
+            cmd: "kubeadm init --pod-network-cidr=10.240.0.0/16 --ignore-preflight-errors=NumCPU --ignore-preflight-errors=Mem"
+    ignore_errors: yes
+
+  - name: "k8S Internal Folder Creation...."
+    shell:
+            cmd: "mkdir -p $HOME/.kube"
+
+  - name: "Duplicate Folder Deletion..."
+    file:
+        path: "$HOME/.kube/config"
+        state: absent
+    ignore_errors: yes
+
+  - name: "Copying file to Internal Folder..."
+    shell:
+            cmd: "cp -i /etc/kubernetes/admin.conf $HOME/.kube/config"
+
+  - name: "Configuration k8s file...."
+    shell:
+            cmd: "sudo chown $(id -u):$(id -g) $HOME/.kube/config"
+
+  - name: "Flannel Starting..."
+    shell:
+            cmd: "kubectl apply  -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+
+  - name: "Creating Token..."
+    shell:
+            cmd: "kubeadm token create --print-join-command"
+    register: token
+
+  - name: "Token Saving.."
+    local_action:
+            copy
+                content="{{ token.stdout }}"
+                dest="./token.txt"
