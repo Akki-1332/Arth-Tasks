@@ -9,7 +9,7 @@
    - In default Section You have to provide your **ssh_privae_key_file_name** in place of **akki.pem**
    - Like : `private_key_file= /root/k8s_setup/aws_host/your_key.pem`.
    - Paste **ansible.cfg** to `/etc/ansible/ansible.cfg` in your System.
-   ![alt text](image.png)
+   ![alt text](image.PNG)
    
 4. You have to change some more things to make it work properly. (**Read Instructions Carefully**)
    - Go Inside **aws_host** folder.
