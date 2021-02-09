@@ -1,4 +1,4 @@
 ---
-- hosts: tag_Name_worker1
+- hosts: tag_Name_worker
   roles:
   - role: "worker"
