@@ -1,0 +1,4 @@
+---
+- hosts: tag_Name_master1
+  roles:
+  - role: "master"
