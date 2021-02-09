@@ -1,0 +1,68 @@
+---
+# task file for Worker...
+  - name: "Docker Installation..."
+    package:
+            name: "docker"
+            state: present
+
+  - name: "Docker Driver Updating..."
+    copy:
+            src: "docker.daemon.json"
+            dest: "/etc/docker/daemon.json"
+
+  - name: "Kubernetes Repo..."
+    copy:
+            src: "k8s.repo"
+            dest: "/etc/yum.repos.d/kubernetes.repo"
+
+  - name: "Kubernetes Installation..."
+    package:
+            name: "kubeadm"
+            state: present
+
+  - name: "Iproute-tc Installation..."
+    package:
+            name: "iproute-tc"
+            state: present
+
+  - name: "K8s Configuration..."
+    copy:
+            src: "k8s.txt"
+            dest: "/etc/sysctl.d/k8s.conf"
+  - name: "System start..."
+    shell:
+            cmd: "sysctl --system"
+
+  - name: "Docker Service start..."
+    service:
+            name: "docker"
+            state: started
+            enabled: yes
+
+  - name: "Kubelet Service Start..."
+    service:
+            name: "kubelet"
+            state: started
+            enabled: yes
+  - name: "Pulling Images..."
+    shell:
+            cmd: "kubeadm config images pull"
+
+  - name: "Kubernet Initailising..."
+    shell:
+            cmd: "kubeadm init --ignore-preflight-errors=NumCPU --ignore-preflight-errors=Mem"
+    ignore_errors: yes
+
+  - name: "kubeadm reset..."
+    shell:
+            cmd: "echo y | kubeadm reset"
+  
+  - name: "Token Copy..."
+    copy:
+            src: "token.txt"
+            dest: "/root/token.txt"
+
+  - name: "Join..."
+    shell:
+            cmd: "bash /root/token.txt"
+    ignore_errors: yes
